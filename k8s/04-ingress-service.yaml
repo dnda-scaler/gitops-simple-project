@@ -10,7 +10,7 @@ metadata:
     # UPDATE ANNOTATION
 spec:
   rules:
-    - host: cnrs.scaleway.com
+    - host: user-mgt.scaleway.com
       http:
         paths:
           - path: /api/?(.*)
