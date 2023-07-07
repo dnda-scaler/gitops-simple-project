@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-mgt-web-app-cluster-ip-service
+spec:
+  type: ClusterIP
+  selector:
+    component: user-mgt-web
+  ports:
+    - port: 80
+      targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-mgt-web-app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: user-mgt-web
+  template:
+    metadata:
+      labels:
+        component: user-mgt-web
+    spec:
+      containers:
+        - name: user-mgt-web-app
+          image: dndascale/user-management-web-app:2.0.0
+          ports:
+            - containerPort: 3000

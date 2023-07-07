@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-mgt-api-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: user-mgt-api
+  template:
+    metadata:
+      labels:
+        component: user-mgt-api
+    spec:
+      containers:
+        - name: user-mgt-api
+          image: dndascale/user-management-api:2.0.0
+          ports:
+            - containerPort: 5000
+          env:
+            - name: SERVER_PORT
+              value: "5000"
+            - name: DATABASE_HOST
+              value: mongo-cluster-ip-service
+            - name: DATABASE_PORT
+              value: "27017"
+            - name: DATABASE_NAME
+              value: USER_DB
+            - name: DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: username
+            - name: DATABASE_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-mgt-api-cluster-ip-service
+spec:
+  type: ClusterIP
+  selector:
+    component: user-mgt-api
+  ports:
+    - port: 5000
+      targetPort: 5000

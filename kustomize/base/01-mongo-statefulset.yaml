@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mongo-secret
+type: Opaque
+data:
+  username: YWRtaW4=
+  password: UGFzc3dvcmQxMjM0IQ==
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongo-statefulset
+spec:
+  selector:
+    matchLabels:
+     component: mongo
+  serviceName: "mongo-db"
+  replicas: 1 
+  template:
+    metadata:
+      labels:
+        component: mongo
+    spec:
+      volumes:
+        - name: mongo-storage
+          persistentVolumeClaim:
+            claimName: mongo-pvc
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: mongo
+          image: mongo
+          ports:
+            - containerPort: 27017
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: username
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: password  
+          volumeMounts:
+            - mountPath: /data/db
+              name: mongo-storage
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo-cluster-ip-service
+spec:
+  type: ClusterIP
+  selector:
+    component: mongo
+  ports:
+    - port: 27017
+      targetPort: 27017
