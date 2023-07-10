@@ -18,3 +18,4 @@ resources:
 - 02-user-mgt-api-deployment.yaml
 - 03-user-mgt-web-app-deployment.yaml
 - 04-ingress-service.yaml
+- namespace.yaml

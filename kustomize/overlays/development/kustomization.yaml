@@ -26,3 +26,9 @@ patches:
       kind: Ingress
       name: ingress-service
    path: ingress-patch.yaml
+ - target:
+    group: ""
+    version: "v1"
+    kind: Namespace
+   path: namespace-patch.yaml
+
