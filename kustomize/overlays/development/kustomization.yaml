@@ -16,7 +16,7 @@ secretGenerator:
   type: Opaque
 images:
   - name: mongo
-    newTag: jammy
+    newTag: 6.0.7-jammy
 resources:
 - ../../base
 patches:
